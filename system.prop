@@ -96,3 +96,6 @@ ro.disableWifiApFirmwareReload=true
 
 # Tethering
 net.tethering.noprovisioning=true
+
+# SIM settings
+ro.telephony.sim_unlocked=1
