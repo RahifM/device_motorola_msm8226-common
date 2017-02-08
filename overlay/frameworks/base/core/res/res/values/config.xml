@@ -368,4 +368,8 @@
 
     <!-- Flag indicating if device supports EAP SIM, AKA, AKA' -->
     <bool name="config_eap_sim_based_auth_supported">false</bool>
+
+    <!-- Enable NightLight -->
+    <bool name="config_nightDisplayAvailable">false</bool>
+
 </resources>
