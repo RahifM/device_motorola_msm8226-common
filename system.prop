@@ -1,3 +1,6 @@
+#
+# 8226-common sys.prop?
+#
 
 # Art
 dalvik.vm.dex2oat-flags=--no-watch-dog
@@ -85,7 +88,7 @@ rild.libargs=-d /dev/smd0
 ro.use_data_netmgrd=true
 
 # Scheduler
-sys.io.scheduler=bfq
+sys.io.scheduler=noop
 
 # Subsystem
 persist.sys.ssr.enable_debug=0
