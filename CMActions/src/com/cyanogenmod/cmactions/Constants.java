@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 The CyanogenMod Project
+ * Copyright (c) 2017 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,13 @@
 
 package com.cyanogenmod.cmactions;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+public class Constants {
 
-public class BootCompletedReceiver extends BroadcastReceiver {
+    public static final String DOZE_INTENT = "com.android.systemui.doze.pulse";
 
-    private static final boolean DEBUG = false;
-    private static final String TAG = "CMActions";
+    public static final String PREF_GESTURE_HAND_WAVE_KEY = "gesture_hand_wave";
+    public static final String PREF_GESTURE_HAND_WAVE_FLAT_KEY = "gesture_hand_wave_flat";
+    public static final String PREF_GESTURE_POCKET_KEY = "gesture_pocket";
 
-    @Override
-    public void onReceive(final Context context, Intent intent) {
-        if (DEBUG) Log.d(TAG, "Starting service");
-        context.startService(new Intent(context, CMActionsService.class));
-    }
-
+    public static final String DOZE_SETTINGS_TILE_KEY = "doze_device_settings";
 }

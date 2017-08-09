@@ -424,4 +424,5 @@
 
     <!-- Enable NightLight -->
     <bool name="config_nightDisplayAvailable">true</bool>
+
 </resources>
