@@ -29,29 +29,32 @@ AccelerometerSensor::AccelerometerSensor()
       mPendingEventsMask(0),
       mAccelDelay(0)
 {
+    memset(&mPendingEvents, 0, sizeof(mPendingEvents));
+
     mPendingEvents[ACC].version = sizeof(sensors_event_t);
     mPendingEvents[ACC].sensor = ID_A;
     mPendingEvents[ACC].type = SENSOR_TYPE_ACCELEROMETER;
-    memset(mPendingEvents[ACC].data, 0, sizeof(mPendingEvents[ACC].data));
+    mPendingEvents[ACC].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
     mPendingEventsFlushCount[ACC] = 0;
+    writeAkmDelay(ID_A, -1);
 
     mPendingEvents[SO].version = sizeof(sensors_event_t);
     mPendingEvents[SO].sensor = ID_SO;
     mPendingEvents[SO].type = SENSOR_TYPE_SCREEN_ORIENTATION;
-    memset(mPendingEvents[SO].data, 0, sizeof(mPendingEvents[SO].data));
     mPendingEventsFlushCount[SO] = 0;
 
     mPendingEvents[SM].version = sizeof(sensors_event_t);
     mPendingEvents[SM].sensor = ID_SM;
     mPendingEvents[SM].type = SENSOR_TYPE_SIGNIFICANT_MOTION;
-    memset(mPendingEvents[SM].data, 0, sizeof(mPendingEvents[SM].data));
     mPendingEventsFlushCount[SM] = 0;
 }
 
 AccelerometerSensor::~AccelerometerSensor()
 {
-    if (mEnabled & MODE_ACCEL)
+    if (mEnabled & MODE_ACCEL) {
+        writeAkmDelay(ID_A, -1);
         enable(ID_A, 0);
+    }
 
     if (mEnabled & MODE_ROTATE)
         enable(ID_SO, 0);
@@ -110,7 +113,7 @@ int AccelerometerSensor::enable(int32_t handle, int en)
     mEnabled = flag;
 
     if (handle == ID_A) {
-        writeAkmDelay(handle, enable ? mAccelDelay : 0);
+        writeAkmDelay(handle, enable ? mAccelDelay : -1);
     }
 
     return 0;
