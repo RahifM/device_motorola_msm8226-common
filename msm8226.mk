@@ -85,8 +85,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libxml2 \
     libshims_camera \
-    camera.msm8226 \
-    Snap
+    camera.msm8226
 
 # Display
 PRODUCT_PACKAGES += \
@@ -105,10 +104,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     FMRadio \
     libfmjni
-
-# Gello
-PRODUCT_PACKAGES += \
-    Gello
 
 # GPS
 PRODUCT_PACKAGES += \
