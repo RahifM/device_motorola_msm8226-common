@@ -15,42 +15,46 @@
  * limitations under the License.
  */
 
-#include <fcntl.h>
 #include <string.h>
 #include <cutils/log.h>
 
 #include "AccelerometerSensor.h"
+#include "AkmSysfs.h"
 
 AccelerometerSensor::AccelerometerSensor()
     : SensorBase("/dev/lis3dh", "accelerometer"),
       mEnabled(0),
       mOriEnabled(false),
       mInputReader(8),
-      mPendingEventsMask(0)
+      mPendingEventsMask(0),
+      mAccelDelay(0)
 {
+    memset(&mPendingEvents, 0, sizeof(mPendingEvents));
+
     mPendingEvents[ACC].version = sizeof(sensors_event_t);
     mPendingEvents[ACC].sensor = ID_A;
     mPendingEvents[ACC].type = SENSOR_TYPE_ACCELEROMETER;
-    memset(mPendingEvents[ACC].data, 0, sizeof(mPendingEvents[ACC].data));
+    mPendingEvents[ACC].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
     mPendingEventsFlushCount[ACC] = 0;
+    writeAkmDelay(ID_A, -1);
 
     mPendingEvents[SO].version = sizeof(sensors_event_t);
     mPendingEvents[SO].sensor = ID_SO;
     mPendingEvents[SO].type = SENSOR_TYPE_SCREEN_ORIENTATION;
-    memset(mPendingEvents[SO].data, 0, sizeof(mPendingEvents[SO].data));
     mPendingEventsFlushCount[SO] = 0;
 
     mPendingEvents[SM].version = sizeof(sensors_event_t);
     mPendingEvents[SM].sensor = ID_SM;
     mPendingEvents[SM].type = SENSOR_TYPE_SIGNIFICANT_MOTION;
-    memset(mPendingEvents[SM].data, 0, sizeof(mPendingEvents[SM].data));
     mPendingEventsFlushCount[SM] = 0;
 }
 
 AccelerometerSensor::~AccelerometerSensor()
 {
-    if (mEnabled & MODE_ACCEL)
+    if (mEnabled & MODE_ACCEL) {
+        writeAkmDelay(ID_A, -1);
         enable(ID_A, 0);
+    }
 
     if (mEnabled & MODE_ROTATE)
         enable(ID_SO, 0);
@@ -108,30 +112,21 @@ int AccelerometerSensor::enable(int32_t handle, int en)
     }
     mEnabled = flag;
 
+    if (handle == ID_A) {
+        writeAkmDelay(handle, enable ? mAccelDelay : -1);
+    }
+
     return 0;
 }
 
-void AccelerometerSensor::writeAkmAccel(float x, float y, float z)
+bool AccelerometerSensor::hasPendingEvents() const
 {
-    int16_t buf[3];
-    int ret;
-    int fd;
-
-    buf[0] = (int16_t) (x * CONVERT_ACC);
-    buf[1] = (int16_t) (y * CONVERT_ACC);
-    buf[2] = (int16_t) (z * CONVERT_ACC);
-
-    fd = open("/sys/devices/virtual/compass/akm8963/accel", O_WRONLY);
-    if (fd < 0) {
-        ALOGE("Accelerometer: could not open accel file");
-        return;
+    for (int i = 0; i < NUM_SENSORS; i++) {
+        if (mPendingEventsFlushCount[i] > 0) {
+            return true;
+        }
     }
-
-    ret = write(fd, buf, sizeof(buf));
-    if (ret < 0)
-        ALOGE("Accelerometer: could not write accel data");
-
-    close(fd);
+    return false;
 }
 
 int AccelerometerSensor::setDelay(int32_t handle, int64_t ns)
@@ -142,27 +137,14 @@ int AccelerometerSensor::setDelay(int32_t handle, int64_t ns)
 
     switch (handle) {
     case ID_A:
-        ALOGV("Accelerometer (ACC): delay=%lld", ns);
+        ALOGV("Accelerometer (ACC): delay=%lld ns", ns);
         break;
     case ID_SO:
-        ALOGV("Accelerometer (SO): ignoring delay=%lld", ns);
+        ALOGV("Accelerometer (SO): ignoring delay=%lld ns", ns);
         return 0;
     case ID_SM:
         /* Significant motion sensors should not set any delay */
-        ALOGV("Accelerometer (SM): ignoring delay=%lld", ns);
-        return 0;
-    }
-
-    switch (handle) {
-    case ID_A:
-        ALOGV("Accelerometer (ACC): delay=%d", delay);
-        break;
-    case ID_SO:
-        ALOGV("Accelerometer (SO): delay=%d", delay);
-        return 0;
-    case ID_SM:
-        /* Significant motion sensors should not set any delay */
-        ALOGV("Accelerometer (SM): delay=%d", delay);
+        ALOGV("Accelerometer (SM): ignoring delay=%lld ns", ns);
         return 0;
     }
 
@@ -172,19 +154,11 @@ int AccelerometerSensor::setDelay(int32_t handle, int64_t ns)
     if (ret < 0)
         ALOGE("Accelerometer: could not set delay: %d", ret);
 
-    fd = open("/sys/class/compass/akm8963/delay_acc", O_WRONLY);
-    if (fd >= 0) {
-        char buf[80];
-        int ret;
-        sprintf(buf, "%lld", ns);
-        ret = write(fd, buf, strlen(buf)+1);
-        if (ret < 0) {
-            ALOGE("AccelerometerSensor: could not write delay_acc");
-            close(fd);
-            return ret;
+    if (handle == ID_A) {
+        mAccelDelay = ns;
+        if (mEnabled & indexToMask(ACC)) {
+            writeAkmDelay(ID_A, ns);
         }
-        close(fd);
-        return 0;
     }
 
     return ret;

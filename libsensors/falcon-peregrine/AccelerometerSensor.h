@@ -66,12 +66,13 @@ private:
     sensors_event_t mPendingEvents[NUM_SENSORS];
     uint32_t mPendingEventsMask;
     int mPendingEventsFlushCount[NUM_SENSORS];
-    void writeAkmAccel(float x, float y, float z);
+    int64_t mAccelDelay;
 
 public:
             AccelerometerSensor();
     virtual ~AccelerometerSensor();
     virtual int readEvents(sensors_event_t* data, int count);
+    virtual bool hasPendingEvents() const;
     virtual int setDelay(int32_t handle, int64_t ns);
     virtual int enable(int32_t handle, int enabled);
     virtual int flush(int32_t handle);
