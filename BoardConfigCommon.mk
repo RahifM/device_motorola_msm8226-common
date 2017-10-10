@@ -97,6 +97,9 @@ MALLOC_SVELTE := true
 # Partitions
 BOARD_FLASH_BLOCK_SIZE := 131072
 
+# Power HAL
+TARGET_USES_DEVICE_SPECIFIC_POWERHAL := true
+
 # Properties
 TARGET_SYSTEM_PROP += $(VENDOR_PATH)/system.prop
 
