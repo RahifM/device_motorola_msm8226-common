@@ -52,6 +52,9 @@ ro.qc.sdk.izat.service_mask=0x5
 persist.gps.qc_nlp_in_use=0
 persist.loc.nlp_name=com.qualcomm.services.location
 
+# Maintainer
+ro.cardinal.maintainer=Rahif ツ
+
 # Media
 media.stagefright.legacyencoder=true
 media.stagefright.less-secure=true
