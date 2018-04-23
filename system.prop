@@ -61,6 +61,7 @@ persist.loc.nlp_name=com.qualcomm.services.location
 ro.cardinal.maintainer=Rahif ツ
 
 # Media
+camera2.portability.force_api=1
 media.stagefright.legacyencoder=true
 media.stagefright.less-secure=true
 persist.media.treble_omx=false
@@ -106,8 +107,3 @@ persist.sys.ssr.enable_debug=0
 # Wifi
 persist.sys.qc.sub.rdump.on=1
 ro.disableWifiApFirmwareReload=true
-
-# Camera HAL1
-camera2.portability.force_api=1
-media.stagefright.legacyencoder=true
-media.stagefright.less-secure=true
