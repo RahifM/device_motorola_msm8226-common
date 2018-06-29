@@ -1,4 +1,3 @@
-
 #
 # Copyright (C) 2014 The CyanogenMod Project
 #
@@ -18,8 +17,6 @@
 -include vendor/motorola/msm8226-common/BoardConfigVendor.mk
 
 VENDOR_PATH := device/motorola/msm8226-common
-
-ALLOW_MISSING_DEPENDENCIES := true
 
 BOARD_VENDOR := motorola-qcom
 
