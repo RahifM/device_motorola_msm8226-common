@@ -81,6 +81,7 @@ BOARD_CHARGING_MODE_BOOTING_LPM := /sys/mmi_lpm/lpm_mode
 BACKLIGHT_PATH := /sys/class/leds/lcd-backlight/brightness
 BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_NO_CHARGER_LED := true
+WITH_CM_CHARGER := false
 
 # Display
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
