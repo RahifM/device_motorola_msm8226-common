@@ -43,6 +43,8 @@ on early-init
     symlink /data/tombstones /tombstones
 
 on init
+    write /proc/sys/vm/page-cluster 0
+
     # Set permissions for persist partition
     mkdir /persist 0771 system system
 
@@ -70,9 +72,6 @@ on fs
     wait /cache/pds-dump.img
     mount ext3 loop@/cache/pds-dump.img /pds
     restorecon /pds
-
-    # activate zram
-    write /proc/sys/vm/page-cluster 0
 
 on post-fs-data
     mkdir /data/tombstones 0771 system system
@@ -429,9 +428,6 @@ on boot
     # Wifi firmware reload path
     chown wifi wifi /sys/module/wlan/parameters/fwpath
 
-    # Enable ZRAM on boot_complete
-    swapon_all fstab.qcom
-
 # Services start here
 
 service adsprpcd /vendor/bin/adsprpcd
@@ -654,3 +650,6 @@ on property:sys.boot_completed=1
 
     rm /data/system/default_values
     start mpdecision
+
+    # Enable ZRAM on boot_complete
+    swapon_all /vendor/etc/fstab.qcom

@@ -51,7 +51,7 @@ BOARD_KERNEL_SEPARATED_DT := true
 BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01000000 --tags_offset 0x00000100
 LZMA_RAMDISK_TARGETS := recovery
 TARGET_KERNEL_SOURCE := kernel/motorola/msm8226
-KERNEL_TOOLCHAIN        := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin
+KERNEL_TOOLCHAIN        := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-lin-7/bin
 KERNEL_TOOLCHAIN_PREFIX := arm-linux-gnueabi-
 
 # ANT+
@@ -167,8 +167,7 @@ TARGET_LD_SHIM_LIBS := \
     /system/vendor/bin/mpdecision|libshims_atomic.so \
     /system/lib/hw/camera.vendor.msm8226.so|libshims_camera.so \
     /system/lib/libmot_sensorlistener.so|libshims_sensorlistener.so \
-    /system/vendor/lib/libqc-opt.so|libshim_qcopt.so \
-    /system/vendor/lib/libqc-opt.so|libshims_sensorlistener.so
+    /system/vendor/lib/libqc-opt.so|libshim_qcopt.so
 
 # Wifi
 BOARD_HAS_QCOM_WLAN := true
